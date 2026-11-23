@@ -1,0 +1,30 @@
+# Compiled Java classes & packages
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+bin/
+out/
+
+# Build tools (Maven / Gradle)
+target/
+build/
+.gradle/
+
+# IDEs & Editors
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+nbproject/private/
+
+# OS & Logs
+*.log
+.DS_Store
+Thumbs.db
+
+# Material de contexto del curso
+Trabajo-contexto/
