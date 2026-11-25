@@ -8,10 +8,24 @@ Proyecto grupal del módulo **Paradigmas de Programación** (Institución Univer
 
 ---
 
+## Repositorio del proyecto
+
+El código fuente completo y su historial de cambios están disponibles en GitHub:
+
+- **Enlace:** [https://github.com/dabedoyav/paradigmas-programacion-MathDefenders](https://github.com/dabedoyav/paradigmas-programacion-MathDefenders)
+
+Para obtener una copia del repositorio:
+
+```bash
+git clone https://github.com/dabedoyav/paradigmas-programacion-MathDefenders.git
+```
+
+---
+
 ## Estado del proyecto por entregas
 
 - **Entrega 1 (Semana 3):** Propuesta formal, reglas del juego, niveles, puntuación y mockups aprobados.
-- **Entrega 2 (Semana 5 — Lista):** Modelo de negocio completo en `com.mathdefenders.modelo`, pruebas unitarias automatizadas en JUnit 5 (21 pruebas en 5 clases) y documentación HTML generada con Javadoc (incluyendo miembros privados).
+- **Entrega 2 (Semana 5 — Lista):** Modelo de negocio completo en `com.mathdefenders.modelo`, pruebas unitarias automatizadas en JUnit 5 (71 pruebas en 8 clases) y documentación HTML generada con Javadoc (incluyendo miembros privados).
 - **Entrega 3 (Semanas 7 y 8 — Pendiente):** Interfaz gráfica completa en JavaFX, controladores, diagramas UML actualizados y presentación de sustentación.
 
 ---
@@ -60,7 +74,10 @@ C:\paradigmas de programacion
         ├── GestorPuntajesTest.java
         ├── NivelDificultadYJugadorTest.java
         ├── PartidaTest.java
-        └── TorreYRetoMatematicoTest.java
+        ├── RegistroPuntajeTest.java
+        ├── ResultadoRondaYResumenPartidaTest.java
+        ├── RetoMatematicoTest.java
+        └── TorreTest.java
 ```
 
 ---
