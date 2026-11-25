@@ -38,7 +38,7 @@ git clone https://github.com/dabedoyav/paradigmas-programacion-MathDefenders.git
 | **Diego Buitrago González** | `Torre`, `RetoMatematico` + pruebas unitarias y Javadoc |
 | **Javier Buitrago Flórez** | `GeneradorNivel`, `NivelBasico`, `NivelIntermedio`, `NivelAvanzado`, `FabricaGeneradores` + pruebas unitarias y Javadoc |
 | **Santiago Borda Gutiérrez** | `Partida`, `ResultadoRonda`, `ResumenPartida` + pruebas unitarias y Javadoc |
-| **Yeimmy Bernal Tejedor** | `RegistroPuntaje`, `GestorPuntajes`, pruebas unitarias de ranking, configuración Maven (`pom.xml`, `mvnw`) y generación de Javadoc |
+| **Yeimmy Bernal Tejedor** | `RegistroPuntaje`, `GestorPuntajes`, pruebas unitarias de ranking , configuración Maven (`pom.xml`, `mvnw`) y generación de Javadoc |
 
 ---
 
@@ -107,3 +107,6 @@ mvn javadoc:javadoc
 ### Ubicación del Javadoc para Entrega 2
 Al ejecutar `javadoc:javadoc`, la documentación HTML completa (clases, enumeraciones, atributos, constructores y métodos) queda generada en:
 - `docs/apidocs/index.html`
+
+
+
