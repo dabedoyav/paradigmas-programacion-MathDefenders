@@ -6,126 +6,142 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Representa un desafío aritmético inmutable compuesto por una expresión
- * matemática, su resultado exacto, cuatro opciones únicas de respuesta y el
- * nivel de dificultad al que pertenece.
+ * Un reto es cada pregunta que le sale al jugador en una ronda.
+ *
+ * <p>Trae la operación (por ejemplo "38 + 15 - 12"), la respuesta correcta,
+ * las cuatro opciones que van en los botones A, B, C y D, y el nivel al que
+ * pertenece. Una vez se crea el reto no se puede modificar: así nos aseguramos
+ * de que la pregunta no cambie a mitad de la ronda por algún error.</p>
  *
  * @author Diego Buitrago González
- * @version 1.0
+ * @version 1.1
  */
 public final class RetoMatematico {
 
     /**
-     * Número fijo de botones de opción múltiple (A, B, C y D) por cada reto.
+     * Cantidad de opciones que tiene cada reto: una por cada botón (A, B, C y D).
      */
     public static final int CANTIDAD_OPCIONES = 4;
 
     /**
-     * Expresión matemática legible presentada al jugador.
+     * La operación que se le muestra al jugador, por ejemplo "6 x 7".
      */
     private final String expresion;
 
     /**
-     * Resultado entero exacto de la expresión matemática.
+     * El resultado correcto de la operación.
      */
     private final int respuestaCorrecta;
 
     /**
-     * Lista inmutable de exactamente cuatro opciones numéricas distintas.
+     * Las cuatro opciones de respuesta, en el orden en que van en los botones.
+     * Es una lista que no se puede modificar.
      */
     private final List<Integer> opciones;
 
     /**
-     * Nivel de dificultad al que corresponde este reto.
+     * El nivel de dificultad al que pertenece el reto (básico, intermedio o avanzado).
      */
     private final NivelDificultad nivel;
 
     /**
-     * Construye un reto matemático validando que la expresión sea no vacía, que
-     * existan exactamente cuatro opciones únicas sin valores nulos y que la
-     * respuesta correcta forme parte de dichas opciones.
+     * Crea un reto nuevo. Antes de guardarlo revisa que todo esté bien: que la
+     * operación no venga vacía, que haya exactamente cuatro opciones distintas
+     * y que la respuesta correcta sí esté entre ellas. Si algo falla, el reto
+     * no se crea.
      *
-     * @param expresion texto de la expresión matemática.
-     * @param respuestaCorrecta resultado exacto de la operación.
-     * @param opciones lista de cuatro opciones posibles de respuesta.
-     * @param nivel nivel de dificultad asociado al reto.
-     * @throws IllegalArgumentException si algún parámetro es inválido o las opciones no cumplen las reglas.
+     * @param expresion la operación que se le va a mostrar al jugador.
+     * @param respuestaCorrecta el resultado correcto de la operación.
+     * @param opciones las cuatro opciones de respuesta.
+     * @param nivel el nivel de dificultad del reto.
+     * @throws IllegalArgumentException si alguno de los datos no cumple las reglas.
      */
     public RetoMatematico(
             String expresion,
             int respuestaCorrecta,
             List<Integer> opciones,
             NivelDificultad nivel) {
+        // Primero miramos si es null; si lo fuera y llamáramos trim(), se reventaría
         if (expresion == null || expresion.trim().isEmpty()) {
             throw new IllegalArgumentException("La expresión del reto no puede ser nula ni estar vacía.");
         }
         if (nivel == null) {
             throw new IllegalArgumentException("El nivel del reto no puede ser nulo.");
         }
+        // Tienen que ser exactamente 4 opciones, ni una más ni una menos
         if (opciones == null || opciones.size() != CANTIDAD_OPCIONES) {
             throw new IllegalArgumentException("El reto debe contener exactamente " + CANTIDAD_OPCIONES + " opciones.");
         }
+        // Ninguna opción puede venir vacía (null), porque el botón quedaría sin número
         for (Integer opcion : opciones) {
             if (opcion == null) {
                 throw new IllegalArgumentException("Las opciones del reto no pueden contener valores nulos.");
             }
         }
+        // Truco: un Set no guarda repetidos. Si al pasar las opciones al Set
+        // quedan menos de 4, es porque había números repetidos
         Set<Integer> opcionesUnicas = new HashSet<>(opciones);
         if (opcionesUnicas.size() != CANTIDAD_OPCIONES) {
             throw new IllegalArgumentException("Las cuatro opciones del reto deben ser distintas entre sí.");
         }
+        // Si la respuesta correcta no está entre las opciones, el jugador nunca podría ganar
         if (!opcionesUnicas.contains(respuestaCorrecta)) {
             throw new IllegalArgumentException("La respuesta correcta debe estar incluida dentro de las opciones.");
         }
 
+        // Ya validado todo, guardamos los datos
         this.expresion = expresion.trim();
         this.respuestaCorrecta = respuestaCorrecta;
+        // Hacemos una copia que no se puede modificar. Así, si alguien cambia la
+        // lista original después, nuestro reto queda intacto
         this.opciones = List.copyOf(opciones);
         this.nivel = nivel;
     }
 
     /**
-     * Obtiene la expresión aritmética del reto.
+     * Devuelve la operación del reto.
      *
-     * @return texto de la expresión matemática.
+     * @return el texto de la operación.
      */
     public String obtenerExpresion() {
         return expresion;
     }
 
     /**
-     * Obtiene el valor entero exacto que resuelve la expresión.
+     * Devuelve el resultado correcto de la operación.
      *
-     * @return respuesta correcta del reto.
+     * @return la respuesta correcta.
      */
     public int obtenerRespuestaCorrecta() {
         return respuestaCorrecta;
     }
 
     /**
-     * Obtiene la lista inmutable de las cuatro opciones de respuesta.
+     * Devuelve las cuatro opciones del reto. La lista es de solo lectura, así que
+     * nadie la puede cambiar desde afuera.
      *
-     * @return lista inmutable de cuatro enteros.
+     * @return la lista con las cuatro opciones.
      */
     public List<Integer> obtenerOpciones() {
         return opciones;
     }
 
     /**
-     * Obtiene el nivel de dificultad al que pertenece el reto.
+     * Devuelve el nivel de dificultad del reto.
      *
-     * @return nivel de dificultad.
+     * @return el nivel del reto.
      */
     public NivelDificultad obtenerNivel() {
         return nivel;
     }
 
     /**
-     * Obtiene el valor numérico de la opción ubicada en el índice indicado.
+     * Devuelve el número que va en un botón según su posición
+     * (0 es A, 1 es B, 2 es C y 3 es D).
      *
-     * @param indice posición entre 0 (A) y 3 (D).
-     * @return valor numérico de la opción.
-     * @throws IllegalArgumentException si el índice está fuera del rango de 0 a 3.
+     * @param indice la posición del botón, de 0 a 3.
+     * @return el número de esa opción.
+     * @throws IllegalArgumentException si la posición no está entre 0 y 3.
      */
     public int obtenerOpcion(int indice) {
         validarIndiceOpcion(indice);
@@ -133,51 +149,55 @@ public final class RetoMatematico {
     }
 
     /**
-     * Obtiene la letra identificadora (A, B, C o D) correspondiente al índice indicado.
+     * Devuelve la letra del botón según su posición: 0 es 'A', 1 es 'B', etc.
      *
-     * @param indice posición entre 0 y 3.
-     * @return letra de la opción ('A', 'B', 'C' o 'D').
-     * @throws IllegalArgumentException si el índice está fuera del rango de 0 a 3.
+     * @param indice la posición del botón, de 0 a 3.
+     * @return la letra de la opción ('A', 'B', 'C' o 'D').
+     * @throws IllegalArgumentException si la posición no está entre 0 y 3.
      */
     public char obtenerLetraOpcion(int indice) {
         validarIndiceOpcion(indice);
+        // En Java un char es un número por debajo: 'A' + 1 da 'B', 'A' + 2 da 'C'...
         return (char) ('A' + indice);
     }
 
     /**
-     * Obtiene el índice (0 a 3) en el que se encuentra la respuesta correcta.
+     * Dice en qué posición (de 0 a 3) quedó la respuesta correcta. La pantalla
+     * lo puede usar para pintar de verde el botón correcto.
      *
-     * @return posición de la respuesta correcta dentro de {@link #obtenerOpciones()}.
+     * @return la posición de la respuesta correcta dentro de las opciones.
      */
     public int obtenerIndiceRespuestaCorrecta() {
         return opciones.indexOf(respuestaCorrecta);
     }
 
     /**
-     * Verifica si el valor elegido por el jugador coincide con la respuesta correcta.
+     * Revisa si lo que eligió el jugador es la respuesta correcta.
+     * Es lo que se llama cuando el jugador hace clic en un botón.
      *
-     * @param valorSeleccionado valor seleccionado por el jugador.
-     * @return {@code true} si coincide con la respuesta correcta; {@code false} en caso contrario.
+     * @param valorSeleccionado el número que eligió el jugador.
+     * @return {@code true} si acertó; {@code false} si no.
      */
     public boolean esRespuestaCorrecta(int valorSeleccionado) {
         return valorSeleccionado == respuestaCorrecta;
     }
 
     /**
-     * Verifica si el valor indicado pertenece al conjunto de las cuatro opciones del reto.
+     * Revisa si un número es una de las cuatro opciones del reto.
      *
-     * @param valorSeleccionado valor a comprobar.
-     * @return {@code true} si forma parte de las opciones ofrecidas; {@code false} en otro caso.
+     * @param valorSeleccionado el número que queremos revisar.
+     * @return {@code true} si está entre las opciones; {@code false} si no.
      */
     public boolean esOpcionValida(int valorSeleccionado) {
         return opciones.contains(valorSeleccionado);
     }
 
     /**
-     * Valida que el índice de opción se encuentre dentro del rango permitido de 0 a 3.
+     * Método de apoyo que revisa que la posición del botón esté entre 0 y 3.
+     * Lo usan varios métodos, así no toca repetir el mismo if en cada uno.
      *
-     * @param indice índice de opción a verificar.
-     * @throws IllegalArgumentException si el índice es menor que 0 o mayor o igual que 4.
+     * @param indice la posición que queremos revisar.
+     * @throws IllegalArgumentException si la posición es menor que 0 o mayor que 3.
      */
     private static void validarIndiceOpcion(int indice) {
         if (indice < 0 || indice >= CANTIDAD_OPCIONES) {
@@ -187,16 +207,20 @@ public final class RetoMatematico {
     }
 
     /**
-     * Compara este reto con otro objeto por expresión, respuesta, opciones y nivel.
+     * Compara dos retos por su contenido. Si tienen la misma operación, la misma
+     * respuesta, las mismas opciones en el mismo orden y el mismo nivel, se
+     * consideran iguales aunque sean objetos distintos.
      *
-     * @param objeto otro objeto a comparar.
-     * @return {@code true} si representan exactamente el mismo reto; {@code false} en caso contrario.
+     * @param objeto el otro objeto con el que se compara.
+     * @return {@code true} si son el mismo reto; {@code false} si no.
      */
     @Override
     public boolean equals(Object objeto) {
+        // Si es literalmente el mismo objeto, de una son iguales
         if (this == objeto) {
             return true;
         }
+        // Si no es un RetoMatematico (o es null), no pueden ser iguales
         if (!(objeto instanceof RetoMatematico otro)) {
             return false;
         }
@@ -207,9 +231,11 @@ public final class RetoMatematico {
     }
 
     /**
-     * Calcula el código hash consistente con {@link #equals(Object)}.
+     * Calcula el código hash del reto con los mismos datos que usa equals.
+     * Java exige que si dos objetos son iguales tengan el mismo hash; si no,
+     * cosas como HashSet o HashMap funcionan mal.
      *
-     * @return valor hash del reto matemático.
+     * @return el código hash del reto.
      */
     @Override
     public int hashCode() {
@@ -217,9 +243,10 @@ public final class RetoMatematico {
     }
 
     /**
-     * Devuelve una representación textual legible del reto matemático.
+     * Muestra el reto como texto, con el nivel, la operación y las opciones.
+     * A propósito no muestra la respuesta correcta, para que no se filtre.
      *
-     * @return cadena descriptiva con el nivel, expresión y opciones.
+     * @return un texto que describe el reto.
      */
     @Override
     public String toString() {
