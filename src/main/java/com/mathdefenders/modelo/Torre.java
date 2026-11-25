@@ -1,75 +1,88 @@
 package com.mathdefenders.modelo;
 
 /**
- * Representa la torre científica que el jugador debe proteger mediante el
- * sistema de vidas o escudos activos.
+ * La torre es lo que el jugador tiene que defender en el juego.
+ *
+ * <p>Básicamente es un contador de vidas (los escudos): arranca con 3, cada vez
+ * que el jugador se equivoca pierde una y, si llega a cero, se acaba la partida.
+ * Esta clase no sabe nada de la parte gráfica; solo lleva la cuenta de las vidas
+ * para que la pantalla las pueda mostrar.</p>
  *
  * @author Diego Buitrago González
- * @version 1.0
+ * @version 1.1
  */
 public class Torre {
 
     /**
-     * Cantidad predeterminada de vidas (escudos) de la torre al iniciar una partida.
+     * Número de vidas con las que arranca la torre en una partida normal.
+     * Son 3, tal como quedó en las reglas de la Entrega 1.
      */
     public static final int VIDAS_INICIALES = 3;
 
     /**
-     * Capacidad máxima de vidas configurada para esta torre.
+     * Cuántas vidas puede tener la torre como máximo. Se define al crearla
+     * y después no cambia (por eso es final).
      */
     private final int vidasMaximas;
 
     /**
-     * Cantidad actual de vidas disponibles en la torre.
+     * Cuántas vidas le quedan a la torre en este momento. Este valor sí va
+     * cambiando: baja con cada error y vuelve al máximo cuando se reinicia.
      */
     private int vidasActuales;
 
     /**
-     * Crea una torre con la cantidad estándar de {@value #VIDAS_INICIALES} vidas iniciales.
+     * Crea una torre normal, con las {@value #VIDAS_INICIALES} vidas de siempre.
+     * Es el constructor que usa la partida.
      */
     public Torre() {
+        // Le pasamos el trabajo al otro constructor para no repetir código
         this(VIDAS_INICIALES);
     }
 
     /**
-     * Crea una torre con una cantidad personalizada de vidas máximas.
+     * Crea una torre con la cantidad de vidas que uno quiera. Sirve para las
+     * pruebas o si más adelante queremos niveles con más o menos vidas.
      *
-     * @param vidasMaximas número positivo de vidas iniciales de la torre.
-     * @throws IllegalArgumentException si {@code vidasMaximas} es menor o igual que cero.
+     * @param vidasMaximas cuántas vidas va a tener la torre (tiene que ser mayor que cero).
+     * @throws IllegalArgumentException si le mandan cero o un número negativo.
      */
     public Torre(int vidasMaximas) {
+        // Una torre con 0 o menos vidas no tiene sentido, entonces no la dejamos crear
         if (vidasMaximas <= 0) {
             throw new IllegalArgumentException("Las vidas máximas de la torre deben ser mayores que cero.");
         }
         this.vidasMaximas = vidasMaximas;
+        // La torre siempre arranca con todas las vidas llenas
         this.vidasActuales = vidasMaximas;
     }
 
     /**
-     * Obtiene la cantidad de vidas restantes de la torre.
+     * Devuelve cuántas vidas le quedan a la torre.
      *
-     * @return vidas actuales entre 0 y {@link #obtenerVidasMaximas()}.
+     * @return las vidas actuales (siempre entre 0 y el máximo).
      */
     public int obtenerVidasActuales() {
         return vidasActuales;
     }
 
     /**
-     * Obtiene la cantidad máxima de vidas configurada para la torre.
+     * Devuelve el número máximo de vidas que tiene esta torre.
      *
-     * @return vidas máximas de la torre.
+     * @return las vidas máximas.
      */
     public int obtenerVidasMaximas() {
         return vidasMaximas;
     }
 
     /**
-     * Aplica un punto de daño a la torre disminuyendo sus vidas en uno, sin
-     * descender por debajo de cero.
+     * Le quita una vida a la torre. Se llama cada vez que el jugador responde mal.
+     * Si la torre ya está en cero, no le sigue restando (no hay vidas negativas).
      *
-     * @return cantidad de vidas restantes después de recibir el impacto.
+     * @return cuántas vidas quedaron después del golpe.
      */
     public int recibirDano() {
+        // Solo restamos si todavía queda algo; así nunca bajamos de cero
         if (vidasActuales > 0) {
             vidasActuales--;
         }
@@ -77,44 +90,48 @@ public class Torre {
     }
 
     /**
-     * Indica si la torre perdió todas sus vidas.
+     * Dice si la torre ya se cayó, o sea, si se quedó sin vidas.
+     * Es la condición de Game Over.
      *
-     * @return {@code true} si las vidas llegaron a cero; {@code false} en caso contrario.
+     * @return {@code true} si las vidas llegaron a cero; {@code false} si todavía queda alguna.
      */
     public boolean estaDestruida() {
         return vidasActuales == 0;
     }
 
     /**
-     * Indica si la torre conserva al menos una vida activa.
+     * Dice si la torre sigue en pie, es decir, si le queda por lo menos una vida.
      *
-     * @return {@code true} si la torre sigue en pie; {@code false} si está destruida.
+     * @return {@code true} si todavía tiene vidas; {@code false} si ya está destruida.
      */
     public boolean estaActiva() {
         return vidasActuales > 0;
     }
 
     /**
-     * Calcula la proporción de integridad actual de la torre en un rango de
-     * 0.0 a 1.0, útil para controles gráficos como barras de progreso.
+     * Calcula qué tan "sana" está la torre, como un número entre 0.0 y 1.0.
+     * Por ejemplo, con 2 de 3 vidas da más o menos 0.67. Este valor es justo
+     * el que necesita la barra de progreso (ProgressBar) de JavaFX.
      *
-     * @return fracción de vidas restantes respecto a las vidas máximas.
+     * @return la fracción de vidas que quedan frente al máximo.
      */
     public double obtenerPorcentajeIntegridad() {
+        // Ojo con el (double): sin eso Java hace división entera y 2/3 daría 0
         return (double) vidasActuales / vidasMaximas;
     }
 
     /**
-     * Restaura las vidas actuales de la torre a su capacidad máxima inicial.
+     * Deja la torre otra vez con todas sus vidas, para volver a jugar.
      */
     public void reiniciar() {
         this.vidasActuales = this.vidasMaximas;
     }
 
     /**
-     * Devuelve una representación textual del estado de salud de la torre.
+     * Muestra la torre como texto, algo como {@code Torre{vidas=2/3}}.
+     * Es útil para revisar rápido el estado cuando estamos probando.
      *
-     * @return cadena con las vidas actuales sobre las vidas máximas.
+     * @return un texto con las vidas actuales sobre las máximas.
      */
     @Override
     public String toString() {
