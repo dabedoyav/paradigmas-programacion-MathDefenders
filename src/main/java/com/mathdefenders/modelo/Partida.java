@@ -11,7 +11,16 @@ import java.util.List;
  * puntaje, bonificaciones por racha y condiciones de victoria o derrota.
  *
  * @author Santiago Borda Gutiérrez
- * @version 1.0
+ * @version 1.1- Revision reglas documentadas
+  *
+ *
+ * Reglas de la partida revisadas:
+ * - La partida dura exactamente 10 rondas.
+ * - Cada acierto suma el puntaje base del nivel.
+ * - Con 3 o mas aciertos seguidos se suma un bono de 50 puntos.
+ * - Cada error o tiempo agotado quita 1 vida a la torre y reinicia la racha.
+ * - Si la torre queda en 0 vidas: DERROTA inmediata, aunque sea la ronda 10.
+ * - Si se completan las 10 rondas con la torre viva: VICTORIA.
  */
 public class Partida {
 
@@ -244,6 +253,7 @@ public class Partida {
         int puntosBase = 0;
         int bono = 0;
 
+        // Paso 1 - Si acierto: suma 1 acierto, sube la racha y calcula puntos.
         if (acierto) {
             this.aciertos++;
             this.rachaActual++;
@@ -255,12 +265,14 @@ public class Partida {
                 bono = BONO_RACHA;
             }
             this.puntajeTotal += puntosBase + bono;
+        // Paso 2 - Si falla: suma 1 error, racha a 0 y la torre recibe dano.
         } else {
             this.errores++;
             this.rachaActual = 0;
             this.torre.recibirDano();
         }
 
+        // Paso 3 - Cierre: revisa si la torre cayo o si ya gano por rondas.
         if (this.torre.estaDestruida()) {
             this.estado = EstadoPartida.DERROTA;
             this.jugador.registrarPuntaje(this.nivel, this.puntajeTotal);
